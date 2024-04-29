@@ -8,7 +8,15 @@ tasks.use(express.json());
 
 tasks.get("/", (req, res) => {
   if (taskData) {
-    return res.status(200).send(taskData.tasks);
+    let { status } = req.query;
+    let taskDataModified = { ...taskData };
+    if (status) {
+      let filterOption = status === "1";
+      taskDataModified.tasks = taskDataModified.tasks.filter(
+        (element) => element.completed === filterOption
+      );
+    }
+    return res.status(200).send(taskDataModified.tasks);
   } else {
     return res.status(500).json({ error: "No data found" });
   }
@@ -42,6 +50,8 @@ tasks.post("/", (req, res) => {
       description,
       completed,
       priority,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
 
     fs.writeFile(
@@ -84,6 +94,8 @@ tasks.put("/:id", (req, res) => {
               description,
               completed,
               priority,
+              createdAt: element.createdAt,
+              updatedAt: new Date().toISOString(),
             };
           }
           return element;
