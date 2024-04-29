@@ -34,13 +34,14 @@ tasks.post("/", (req, res) => {
 
   if (isValidated.status === true) {
     const latestId = taskData.tasks.length;
-    const { title, description, completed } = userProvidedDetails;
+    const { title, description, completed, priority } = userProvidedDetails;
     let taskDataModified = taskData;
     taskDataModified.tasks.push({
       id: latestId + 1,
       title,
       description,
       completed,
+      priority,
     });
 
     fs.writeFile(
@@ -73,7 +74,7 @@ tasks.put("/:id", (req, res) => {
       const userProvidedDetails = req.body;
       const isValidated = Validator.validateTaskInfo(userProvidedDetails);
       if (isValidated.status === true) {
-        const { title, description, completed } = userProvidedDetails;
+        const { title, description, completed, priority } = userProvidedDetails;
         let taskDataModified = taskData;
         taskDataModified.tasks = taskDataModified.tasks.map((element, idx) => {
           if (element.id === Number(taskId)) {
@@ -82,6 +83,7 @@ tasks.put("/:id", (req, res) => {
               title,
               description,
               completed,
+              priority,
             };
           }
           return element;
