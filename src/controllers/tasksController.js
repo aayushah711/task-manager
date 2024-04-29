@@ -148,4 +148,19 @@ tasks.delete("/:id", (req, res) => {
   }
 });
 
+tasks.get("/priority/:level", (req, res) => {
+  let { level: taskPriorityLevel } = req.params;
+  const isValidated = Validator.validateTaskPriorityLevel(taskPriorityLevel);
+
+  if (isValidated.status === true) {
+    let taskDataModified = taskData.tasks.filter(
+      (element) => element.priority === taskPriorityLevel
+    );
+    return res.status(200).send(taskDataModified);
+  } else {
+    let message = isValidated.message;
+    return res.status(400).send(message);
+  }
+});
+
 module.exports = tasks;

@@ -20,6 +20,18 @@ class Validator {
       message: "Validated successfully",
     };
   }
+  static validateTaskPriorityLevel(taskPriorityLevel) {
+    if (["low", "medium", "high"].includes(taskPriorityLevel)) {
+      return {
+        status: true,
+        message: "Validated successfully",
+      };
+    }
+    return {
+      status: false,
+      message: "Please provide task priority level",
+    };
+  }
 }
 
 module.exports = Validator;
