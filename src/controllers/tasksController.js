@@ -8,13 +8,20 @@ tasks.use(express.json());
 
 tasks.get("/", (req, res) => {
   if (taskData) {
-    let { status } = req.query;
+    let { status, sort } = req.query;
     let taskDataModified = { ...taskData };
     if (status) {
       let filterOption = status === "1";
       taskDataModified.tasks = taskDataModified.tasks.filter(
         (element) => element.completed === filterOption
       );
+    }
+    if (sort) {
+      taskDataModified.tasks = taskDataModified.tasks.sort((a, b) => {
+        let aVal = new Date(a.createdAt).getTime();
+        let bVal = new Date(b.createdAt).getTime();
+        return bVal - aVal;
+      });
     }
     return res.status(200).send(taskDataModified.tasks);
   } else {
