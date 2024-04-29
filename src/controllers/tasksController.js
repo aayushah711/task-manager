@@ -56,7 +56,7 @@ tasks.post("/", (req, res) => {
       title,
       description,
       completed,
-      priority,
+      priority: priority || "low",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -100,7 +100,7 @@ tasks.put("/:id", (req, res) => {
               title,
               description,
               completed,
-              priority,
+              priority: priority || element.priority,
               createdAt: element.createdAt,
               updatedAt: new Date().toISOString(),
             };

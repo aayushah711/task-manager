@@ -1,6 +1,6 @@
 class Validator {
   static validateTaskInfo(taskInfo) {
-    if (!taskInfo.title || !taskInfo.description || !taskInfo.priority) {
+    if (!taskInfo.title || !taskInfo.description) {
       return {
         status: false,
         message: "Task info is malformed, please provide all the parameters",
@@ -15,7 +15,10 @@ class Validator {
         message: "Please provide completed key as boolean",
       };
     }
-    if (!["low", "medium", "high"].includes(taskInfo.priority)) {
+    if (
+      taskInfo.priority &&
+      !["low", "medium", "high"].includes(taskInfo.priority)
+    ) {
       return {
         status: false,
         message: "Priority can either be 'low', 'medium' or 'high'",
