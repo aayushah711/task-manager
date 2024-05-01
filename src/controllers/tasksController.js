@@ -4,7 +4,27 @@ const taskData = require("../../task.json");
 const Validator = require("../helpers/validator");
 const fs = require("fs");
 
-tasks.use(express.json());
+const updateData = (
+  taskDataModified,
+  res,
+  errorMessage,
+  successCode,
+  successMessage
+) => {
+  fs.writeFile(
+    "task.json",
+    JSON.stringify(taskDataModified),
+    { encoding: "utf8", flag: "w" },
+    (err, data) => {
+      if (err) {
+        return res.status(500).send(errorMessage);
+      } else {
+        taskData.tasks = taskDataModified.tasks;
+        return res.status(successCode).send(successMessage);
+      }
+    }
+  );
+};
 
 tasks.get("/", (req, res) => {
   if (taskData) {
@@ -25,7 +45,9 @@ tasks.get("/", (req, res) => {
     }
     return res.status(200).send(taskDataModified.tasks);
   } else {
-    return res.status(500).json({ error: "No data found" });
+    return res
+      .status(500)
+      .json({ error: "Something went wrong. Please try after sometime" });
   }
 });
 
@@ -40,7 +62,9 @@ tasks.get("/:id", (req, res) => {
       res.status(404).json({ error: "Invalid task" });
     }
   }
-  return res.status(500).json({ error: "No data found" });
+  return res
+    .status(500)
+    .json({ error: "Something went wrong. Please try after sometime" });
 });
 
 tasks.post("/", (req, res) => {
@@ -61,20 +85,12 @@ tasks.post("/", (req, res) => {
       updatedAt: new Date().toISOString(),
     });
 
-    fs.writeFile(
-      "task.json",
-      JSON.stringify(taskDataModified),
-      { encoding: "utf8", flag: "w" },
-      (err, data) => {
-        if (err) {
-          return res
-            .status(500)
-            .send("Something went wrong while creating the task");
-        } else {
-          taskData.tasks = taskDataModified.tasks;
-          return res.status(201).send("Successfully created the task");
-        }
-      }
+    updateData(
+      taskDataModified,
+      res,
+      "Something went wrong while creating the task",
+      201,
+      "Successfully created the task"
     );
   } else {
     let message = isValidated.message;
@@ -108,20 +124,12 @@ tasks.put("/:id", (req, res) => {
           return element;
         });
 
-        fs.writeFile(
-          "task.json",
-          JSON.stringify(taskDataModified),
-          { encoding: "utf8", flag: "w" },
-          (err, data) => {
-            if (err) {
-              return res
-                .status(500)
-                .send("Something went wrong while updating the task");
-            } else {
-              taskData.tasks = taskDataModified.tasks;
-              return res.status(200).send("Successfully updated the task");
-            }
-          }
+        updateData(
+          taskDataModified,
+          res,
+          "Something went wrong while updating the task",
+          200,
+          "Successfully updated the task"
         );
       } else {
         let message = isValidated.message;
@@ -131,7 +139,9 @@ tasks.put("/:id", (req, res) => {
       res.status(404).json({ error: "Invalid task" });
     }
   } else {
-    return res.status(500).json({ error: "No data found" });
+    return res
+      .status(500)
+      .json({ error: "Something went wrong. Please try after sometime" });
   }
 });
 
@@ -145,27 +155,20 @@ tasks.delete("/:id", (req, res) => {
       taskDataModified.tasks = taskDataModified.tasks.filter(
         (element) => element.id !== Number(taskId)
       );
-
-      fs.writeFile(
-        "task.json",
-        JSON.stringify(taskDataModified),
-        { encoding: "utf8", flag: "w" },
-        (err, data) => {
-          if (err) {
-            return res
-              .status(500)
-              .send("Something went wrong while deleting the task");
-          } else {
-            taskData.tasks = taskDataModified.tasks;
-            return res.status(200).send("Successfully deleted the task");
-          }
-        }
+      updateData(
+        taskDataModified,
+        res,
+        "Something went wrong while deleting the task",
+        200,
+        "Successfully deleted the task"
       );
     } else {
       res.status(404).json({ error: "Invalid task" });
     }
   } else {
-    return res.status(500).json({ error: "No data found" });
+    return res
+      .status(500)
+      .json({ error: "Something went wrong. Please try after sometime" });
   }
 });
 
