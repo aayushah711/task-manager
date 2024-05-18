@@ -4,6 +4,8 @@ const taskData = require("../../task.json");
 const Validator = require("../helpers/validator");
 const fs = require("fs");
 
+let taskIdCounter = taskData.tasks.length;
+
 const updateData = (
   taskDataModified,
   res,
@@ -72,11 +74,10 @@ tasks.post("/", (req, res) => {
   const isValidated = Validator.validateTaskInfo(userProvidedDetails);
 
   if (isValidated.status === true) {
-    const latestId = taskData.tasks.length;
     const { title, description, completed, priority } = userProvidedDetails;
     let taskDataModified = taskData;
     taskDataModified.tasks.push({
-      id: latestId + 1,
+      id: ++taskIdCounter,
       title,
       description,
       completed,
